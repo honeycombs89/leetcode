@@ -1,0 +1,87 @@
+PROBLEM: 
+
+Given an array arr of 4 digits, find the latest 24-hour time that can be made using each digit exactly once.
+
+24-hour times are formatted as "HH:MM", where HH is between 00 and 23, and MM is between 00 and 59. The earliest 24-hour time is 00:00, and the latest is 23:59.
+
+Return the latest 24-hour time in "HH:MM" format. If no valid time can be made, return an empty string.
+
+ 
+
+Example 1:
+
+Input: arr = [1,2,3,4]
+Output: "23:41"
+Explanation: The valid 24-hour times are "12:34", "12:43", "13:24", "13:42", "14:23", "14:32", "21:34", "21:43", "23:14", and "23:41". Of these times, "23:41" is the latest.
+Example 2:
+
+Input: arr = [5,5,5,5]
+Output: ""
+Explanation: There are no valid 24-hour times as "55:55" is not valid.
+
+
+
+
+SOLUTION:
+
+ const largestTimeFromDigits = function(A) {
+  const check = (t) => !(t[0] > 2 || (t[0] === 2 && t[1] > 3) || t[2] > 5)
+  const compare = (a, b) => Number.parseInt(a.join('')) - Number.parseInt(b.join(''))
+  let result = []
+  function dfs(start) {
+    if (start > 3) {
+      if (check(A)) {
+        if (result.length === 0) result = [...A]
+        else if (compare(A, result) > 0) result = [...A]
+      }
+    } else {
+      for (let i = start; i < 4; i++) {
+        const temp = A[i]
+        A[i] = A[start]
+        A[start] = temp
+        dfs(start + 1)
+        A[start] = A[i]
+        A[i] = temp
+      }
+    }
+  }
+  dfs(0)
+  return result.length ? '' + result[0] + result[1] + ':' + result[2] + result[3] : ''
+}
+
+;[
+  [1,2,3,4], // '23:41'
+  [5,5,5,5], // ''
+  [2,3,5,9], // '23:59'
+  [0,0,3,1], // '13:00'
+  [0,4,0,0], // '04:00'
+  [4,2,4,4], // ''
+  [2,0,6,6], // '06:26'
+].forEach((A) => {
+  console.log(largestTimeFromDigits(A))
+})
+const idea1 = function() {
+  function set(start, max) {
+    for (let val = max; val >= 0; val--) {
+      let i = -1
+      for (let j = start; j < 4 && i === -1; j++) if (A[j] === val) i = j
+      if (i > -1) {
+        A[i] = A[start]
+        A[start] = val
+        break
+      }
+    }
+  }
+
+  set(0, 2)
+  if (A[0] > 2) return ''
+  if (A[0] === 2) {
+    set(1, 3)
+    if (A[1] > 3) return ''
+  } else {
+    set(1, 9)
+  }
+  set(2, 5)
+  if (A[2] > 5) return ''
+  return '' + A[0] + A[1] + ':' + A[2] + A[3]
+}
