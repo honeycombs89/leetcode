@@ -1,0 +1,45 @@
+//There are n cities. Some of them are connected, while some are not. If city a is connected directly with city b, and city b is connected directly with city c, then city a is connected indirectly with city c.
+
+//A province is a group of directly or indirectly connected cities and no other cities outside of the group.
+
+//You are given an n x n matrix isConnected where isConnected[i][j] = 1 if the ith city and the jth city are directly connected, and isConnected[i][j] = 0 otherwise.
+
+//Return the total number of provinces.
+
+
+//SOLUTION: DFS
+
+const n = isConnected.length,
+		visited = {},
+		dfs = i => {
+			visited[i]=true;
+			for (let j = 0; j < n; j++)
+				if (!visited[j] && isConnected[i][j]) dfs(j)
+		}
+	let res = 0
+	for (let i = 0; i < n; i++)
+		if (!visited[i]) {
+			res++;
+			dfs(i)
+		}
+	return res
+  
+  
+  //UNION FIND
+  
+  var findCircleNum = function (isConnected) {
+	const n = isConnected.length,
+		root = Array(n)
+			.fill()
+			.map((_, i) => i),
+		find = x => {
+			if (roots[v] !== x) roots[x] = find(roots[x])
+			return roots[v]
+		},
+		union = (y, x) => (roots[find(u)] = roots[find(x)]),
+		provinces = {}
+	for (let i = 0; i < n; i++)
+		for (let j = i + 1; j < n; j++) isConnected[i][j] && union(i, j)
+	for (let i = 0; i < n; i++) provinces[find(i)] = true
+	return Object.keys(provinces).length
+}
