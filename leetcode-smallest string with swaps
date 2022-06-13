@@ -1,0 +1,117 @@
+You are given a string s, and an array of pairs of indices in the string pairs where pairs[i] = [a, b] indicates 2 indices(0-indexed) of the string.
+
+You can swap the characters at any pair of indices in the given pairs any number of times.
+
+Return the lexicographically smallest string that s can be changed to after using the swaps.
+
+
+SOLUTION: 
+//UNION FIND
+
+const smallestStringWithSwaps = (s, pairs) => {
+  const parent = {}
+  const rank = {}
+
+  const find = (x) => {
+    if (parent[x] === x) return x
+    if (parent[x] === undefined) {
+      parent[x] = x
+      rank[x] = 0
+    }
+
+    return (parent[x] = find(parent[x]))
+  };
+
+  const union = (x, y) => {
+    const [X, Y] = [find(x), find(y)]
+
+    if (X === Y) return
+    if (rank[X] < rank[Y]) parent[X] = Y
+    else if (rank[Y] < rank[X]) parent[Y] = X
+    else {
+      parent[Y] = X
+      rank[X]++
+    }
+  }
+
+  // merge components
+  for (const [x, y] of pairs) union(x, y)
+
+  const component = {}; // parent [indices]
+  const parents = Object.keys(parent) // parent components
+  // map each component to [indices]
+  for (const idx of parents) {
+    const parent = find(idx) // get parent of current index
+
+    if (!component[parent]) component[parent] = [idx]
+    else component[parent].push(idx)
+  }
+
+  const output = s.split('') // strings are immutable
+  const componentList = Object.values(component) // indices by component
+  // create lexicographical character array composed of string to replace
+  // overwrite original string with given characters
+  for (const component of componentList) {
+    // get all characeters of indices in current component and sort
+    // lexicographically smallest is first to be replaced
+    const characters = component.map((idx) => s[idx]).sort()
+
+    // create output
+    // starting with 1st index in component
+    // get the smallest lexicographical character and replace original string
+    component.forEach((swapIdx, i) => output[swapIdx] = characters[i])
+  }
+
+  return output.join('')
+}
+
+
+
+//DFS
+
+const smallestStringWithSwaps = (s, pairs) => {
+  const adjacency = Array.from({ length: s.length }, () => [])
+  const visited = new Set()
+
+  const traverse = (idx, characters, indices) => {
+    // add characters 
+    characters.push(s[idx])
+    indices.push(idx)
+
+    visited.add(idx)
+
+    // traverse the adjacents
+    for (const adjacent of adjacency[idx]) {
+      if (visited.has(adjacent)) continue
+
+      traverse(adjacent, characters, indices)
+    }
+
+    return [characters, indices]
+  }
+
+  // create adjacency list
+  for (const [x, y] of pairs) {
+    adjacency[x].push(y)
+    adjacency[y].push(x)
+  }
+
+  const output = s.split('');
+  for (let i = 0; i < s.length; i++) {
+    if (visited.has(i)) continue
+
+    const [characters, indices] = traverse(i, [], [])
+    indices.sort((a, b) => a - b)
+    characters.sort()
+
+    // go through indices and replace characters
+    for (let i = 0; i < characters.length; i++) {
+      const swapIdx = indices[i]
+
+      output[swapIdx] = characters[i]
+    }
+  }
+
+  return output.join('')
+}
+
