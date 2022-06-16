@@ -1,0 +1,48 @@
+LINK TO PROBLEM: https://leetcode.com/problems/kth-largest-element-in-an-array/
+
+Given an integer array nums and an integer k, return the kth largest element in the array.
+
+Note that it is the kth largest element in the sorted order, not the kth distinct element.
+
+
+
+SOLUTION WITH WALK THROUGH IN JAVASCRIPT:
+
+var findKthLargest = function(nums, k) {
+    // understanding the problem
+        //unsorted
+    //kth largest element in order, NOT kth distinct element
+    // 1 2 3 3 - my largest is 3, my second largest is also 3
+    //ex 2: k=4 so 4th largest element is 3 again
+    
+    //understand your approaches
+    //sort it
+    //once I sort it, I can just get my Nth value index
+    // 3 2 1 5 6 4
+    // 1 2 3 4 5 6 K=1 then my 5th index, K=2 4th index o get to 5
+    
+    //anytime there's a questions with the Kth/Nth value of an array, there are two things I think about:
+    //1. Sort array
+    // 1 2 3
+    //smallest value is arr[0] and the second smallest is arr[1]... the largest arr[2]
+    //arr[arr.length-1(2)] this has 3 elements minus 1
+    //general find largest or small
+    //max = -10000// - infinity -- you wanna find biggest num so you need to sub for a really low number
+    
+    /*
+    for loop if(x(20) > max) max = x //eventually max will be largest num
+    min =infinity or 100000
+    for loop if(x<min) min =x
+    */
+    //sort it
+    // 1 2 3 4 5 6(can we find pattern/algo)
+    // K=1 largest or 5th index => how do we get the 5th index? some-k=5=>nums.length((nums.length is 6. 6-5=1))k=6-1=5
+    //K=2 second largest or 4th index => how to get 4th index? something-2=4((gives me my 4th index)) => nums.length-k
+    //K=5 1st index - something-5=1 => nums.length=5-1
+    
+    nums.sort((a,b)=>{return a-b}) //browser, language, and library
+    //this sort is n(log n) bc I am using chrome.
+    //since sort already gives me k
+    //merge sort, quick sort, heap sort
+    return nums[nums.length-k]
+}
