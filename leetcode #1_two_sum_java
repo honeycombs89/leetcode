@@ -51,7 +51,7 @@ class Solution {
 
 }
 
-*** TIME COMPLEXITY On2 
+*** TIME COMPLEXITY On2 ****
 
 
 
@@ -92,3 +92,5 @@ class Solution {
         }
        
     }
+
+*** O of n ***
